@@ -1,0 +1,10 @@
+# for dotenv
+.env
+
+# for Python
+venv/
+
+# for IDE
+.idea/
+*.sublime-project
+*.sublime-workspace
