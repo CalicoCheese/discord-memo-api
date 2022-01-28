@@ -3,6 +3,7 @@
 
 # for Python
 venv/
+__pycache__/
 
 # for IDE
 .idea/
