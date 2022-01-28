@@ -7,6 +7,6 @@ from . import ALGORITHM
 def encode(payload: dict) -> str:
     return _encode(
         payload=payload,
-        secrets=SECRET_KEY,
+        key=SECRET_KEY,
         algorithm=ALGORITHM,
     )

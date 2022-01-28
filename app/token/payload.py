@@ -8,7 +8,7 @@ def create(user: User) -> dict:
     return {
         "user": {
             "id": user.id,
-            "name": user.username,
+            "username": user.username,
             "discriminator": user.discriminator
         },
         "time": {
