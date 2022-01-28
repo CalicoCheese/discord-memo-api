@@ -15,6 +15,4 @@ def parse_user(json: dict) -> User:
         if x not in json.keys():
             json[x] = None
 
-    print(json)
-
     return User(**json)
