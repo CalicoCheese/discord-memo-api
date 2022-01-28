@@ -4,5 +4,6 @@ Token = _namedtuple("Token",
                     "access_token expires_in refresh_token scope token_type")
 
 User = _namedtuple("User",
-                   "id username avatar discriminator public_flags flags banner banner_color"
-                   "accent_color locale mfa_enabled")
+                   "id username discriminator avatar "
+                   "bot system mfa_enabled banner banner_color accent_color locale verified email "
+                   "flags premium_type public_flags")
