@@ -1,3 +1,5 @@
+.SECRET_KEY
+
 # for dotenv
 .env
 
