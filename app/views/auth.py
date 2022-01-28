@@ -7,8 +7,8 @@ from discord.fetch import token_by_code
 from discord.fetch import current_user
 from discord.parse import parse_token
 from discord.parse import parse_user
-from token.payload import create
-from token.encode import encode
+from app.token.payload import create
+from app.token.encode import encode
 
 bp = Blueprint(
     "auth", __name__,
