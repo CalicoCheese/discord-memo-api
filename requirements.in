@@ -1,6 +1,14 @@
 flask
 flask-cors
 
+# for database control
+flask-sqlalchemy
+flask-migrate
+mysqlclient
+
 python-dotenv
 
 pyjwt
+
+gunicorn
+gevent
