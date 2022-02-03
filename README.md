@@ -6,6 +6,15 @@ Send a message to the bot to write a new memo!
 - [UI](https://github.com/CalicoCheese/discord-memo-ui)
 - [BOT](https://github.com/CalicoCheese/discord-memo-bot)
 
+## api settings
+
+### database connect
+set your environment value like this
+```text
+SQLALCHEMY_URI = mysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}
+```
+
+
 
 ## dependency notice
 
