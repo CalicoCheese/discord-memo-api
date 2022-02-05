@@ -1,9 +1,9 @@
 from time import time
 
-from discord.tuples import User
+from discord.tuples import DiscordUser
 
 
-def create(user: User) -> dict:
+def create(user: DiscordUser) -> dict:
     now = int(time())
     return {
         "user": {

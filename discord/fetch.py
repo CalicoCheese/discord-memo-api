@@ -8,10 +8,10 @@ from . import DISCORD_BASE
 from . import USER_AGENT
 from . import CLIENT_ID
 from . import CLIENT_SECRET
-from .parse import Token
+from .tuples import DiscordToken
 
 
-def current_user(token: Token):
+def current_user(token: DiscordToken):
     request = Request(
         method="GET",
         url=DISCORD_BASE + "/users/@me",
