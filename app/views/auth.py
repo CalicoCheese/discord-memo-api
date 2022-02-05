@@ -9,39 +9,27 @@ from discord.parse import parse_token
 from discord.parse import parse_user
 from app.token.payload import create
 from app.token.encode import encode
+from app.utils import resp_json
 
-bp = Blueprint(
-    "auth", __name__,
-    url_prefix="/auth"
-)
+bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 
 @bp.get("/get-url")
 def get_url():
     # endpoint for client
-    return jsonify({
-        "url": auth()
-    })
+    return resp_json(data={"auth": auth()})
 
 
 @bp.get("/callback")
 def callback():
     code = request.args.get("code", None)
     if code is None:
-        return jsonify({
-            "message": "code is empty"
-        }), 400
+        return resp_json("code is empty", 400)
 
     try:
-        token = parse_token(
-            json=token_by_code(
-                code=code
-            )
-        )
+        token = parse_token(json=token_by_code(code=code))
     except TypeError:
-        return jsonify({
-            "message": "fail to load access token"
-        }), 400
+        return resp_json("fail to load access token", 400)
 
     token = encode(
         payload=create(
@@ -53,7 +41,4 @@ def callback():
         )
     )
 
-    return jsonify({
-        "message": "login success",
-        "token": token
-    }), 201
+    return resp_json("login success", 201, {"token": token})
