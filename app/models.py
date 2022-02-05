@@ -22,7 +22,7 @@ class User(db.Model):
         default=False
     )
 
-    date = db.Column(
+    creation_date = db.Column(
         db.DateTime,
         nullable=False,
         default=func.now()
@@ -32,6 +32,8 @@ class User(db.Model):
         db.DateTime,
         nullable=False
     )
+
+    memos = db.relationship("Memo")
 
     def __repr__(self):
         return f"<User id={self.id}, discord_id={self.discord_id!r}>"
@@ -45,9 +47,9 @@ class Memo:
         nullable=False
     )
 
-    owner_id = db.Column(  # User.id
+    owner_id = db.Column(
         db.Integer,
-        nullable=False
+        db.ForeignKey("user.id")
     )
 
     create = db.Column(
@@ -65,11 +67,6 @@ class Memo:
     text = db.Column(
         db.Text,
         nullable=False
-    )
-
-    iv = db.Column(
-        db.String(32),
-        nullable=False,
     )
 
     def __repr__(self):
