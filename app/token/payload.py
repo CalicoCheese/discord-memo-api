@@ -12,7 +12,7 @@ def create(user: DiscordUser) -> dict:
             "discriminator": user.discriminator
         },
         "time": {
-            "a": now,
-            "b": now + (3 * 60 * 60)
+            "iat": now,
+            "exp": now + (3 * 60 * 60)
         }
     }
