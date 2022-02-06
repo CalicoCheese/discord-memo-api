@@ -39,7 +39,7 @@ class User(db.Model):
         return f"<User id={self.id}, discord_id={self.discord_id!r}>"
 
 
-class Memo:
+class Memo(db.Model):
     id = db.Column(
         db.Integer,
         unique=True,
@@ -73,7 +73,7 @@ class Memo:
         return f"<Memo id={self.id}, owner_id={self.owner_id}>"
 
 
-class Notice:
+class Notice(db.Model):
     id = db.Column(
         db.Integer,
         unique=True,
