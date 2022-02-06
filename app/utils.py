@@ -11,7 +11,7 @@ from functools import wraps
 token_regex = re.compile(r"Bearer ([a-zA-Z0-9]+\.[a-zA-Z0-9]+\.[a-zA-Z0-9])")
 
 
-def resp_json(message="", code=200, data=None):
+def resp_json(message: str = "", code: int = 200, data=None):
     return jsonify({
         "meta": {
             "message": message,
@@ -21,7 +21,7 @@ def resp_json(message="", code=200, data=None):
     }), code
 
 
-def get_user_from_discord(discord_id):
+def get_user_from_discord(discord_id: str) -> User:
     return User.query.filter_by(discord_id=discord_id).first()
 
 
@@ -36,7 +36,7 @@ def parse_token_from_header(headerval):
         return None
 
 
-def verify_jwt(jwt):
+def verify_jwt(jwt: dict) -> bool:
     if jwt['time']['exp'] < time():
         return False
 
