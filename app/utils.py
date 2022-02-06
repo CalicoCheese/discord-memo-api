@@ -50,17 +50,26 @@ def handle_login(f):
         auth = request.headers.get("authorization")
         token = parse_token_from_header(auth)
         if not token:
-            return resp_json("token is required", 401)
+            return resp_json(
+                message="token is required",
+                code=401
+            )
 
-        jwt_payload = decode(token)
+        jwt_payload = decode(token=token)
 
         if not verify_jwt(jwt_payload):
-            return resp_json("token has been expired", 401)
+            return resp_json(
+                message="token has been expired",
+                code=401
+            )
 
         user = get_user_from_discord(jwt_payload["user"]["id"])
 
         if not user:
-            return resp_json("failed to query a user", 500)
+            return resp_json(
+                message="failed to query a user",
+                code=500
+            )
 
         return f(*args, **kwargs, user=user)
 
