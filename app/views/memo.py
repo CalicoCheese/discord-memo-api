@@ -4,7 +4,7 @@ from flask import request
 from app import db
 from app.utils import handle_login
 from app.utils import handle_memo
-from app.uilts import resp_json
+from app.utils import resp_json
 from app.models import Memo
 
 import datetime
