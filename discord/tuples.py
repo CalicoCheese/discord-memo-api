@@ -6,6 +6,6 @@ DiscordToken = _namedtuple("DiscordToken",
 
 DiscordUser = _namedtuple("DiscordUser",
                           "id username discriminator avatar bot system "
-                          "mfa_enabled banner banner_color accent_color"
+                          "mfa_enabled banner banner_color accent_color "
                           "locale verified email flags premium_type "
                           "public_flags")

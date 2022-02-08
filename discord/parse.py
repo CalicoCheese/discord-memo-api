@@ -6,12 +6,7 @@ def parse_token(json: dict) -> DiscordToken:
 
 
 def parse_user(json: dict) -> DiscordUser:
-    x = [x for x in ['bot', 'system', 'mfa_enabled', 'banner',
-                     'accent_color', 'locale', 'verified',
-                     'email', 'flags', 'premium_type',
-                     'public_flags', 'banner_color']]
-
-    for x in x:
+    for x in DiscordUser._fields:
         if x not in json.keys():
             json[x] = None
 
