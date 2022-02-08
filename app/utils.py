@@ -11,7 +11,7 @@ from functools import wraps
 token_regex = re.compile(r"Bearer ([a-zA-Z0-9]+\.[a-zA-Z0-9]+\.[a-zA-Z0-9])")
 
 
-def resp_json(message: str = "", code: int = 200, data=None):
+def resp_json(message: str = "", code: int = 200, data=None) -> tuple:
     return jsonify({
         "meta": {
             "message": message,
@@ -25,7 +25,7 @@ def get_user_from_discord(discord_id: str) -> User:
     return User.query.filter_by(discord_id=discord_id).first()
 
 
-def parse_token_from_header(headerval):
+def parse_token_from_header(headerval: str) -> str:
     # TODO: check if rsplit is obsolete. Added for the safety measure
     headerval = headerval.rstrip()
     token_match = token_regex.fullmatch(headerval)
