@@ -69,6 +69,13 @@ class Memo(db.Model):
         nullable=False
     )
 
+    def to_json(self):
+        return {
+            "id": self.id,
+            "edit": round(self.edit.timestamp),
+            "text": self.text
+        }
+
     def __repr__(self):
         return f"<Memo id={self.id}, owner_id={self.owner_id}>"
 
