@@ -44,12 +44,10 @@ def callback():
             code=400
         )
 
-    token = encode(
-        payload=create(
-            user=parse_user(
-                json=current_user(
-                    token=token
-                )
+    payload, exp = create(
+        user=parse_user(
+            json=current_user(
+                token=token
             )
         )
     )
@@ -58,6 +56,7 @@ def callback():
         message="login success",
         code=201,
         data={
-            "token": token
+            "token": encode(payload=payload),
+            "exp": exp
         }
     )
