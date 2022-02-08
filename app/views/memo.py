@@ -73,6 +73,3 @@ def edit(user, memo, id_):
     db.commit()
 
     return resp_json("successfully edited the memo", 201)
-
-
-@bp.put("/<id_")
