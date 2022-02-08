@@ -2,6 +2,7 @@ from flask import request
 from flask import jsonify
 
 from app.models import User
+from app.models import Memo
 from app.token.decode import decode
 
 import re
@@ -72,5 +73,35 @@ def handle_login(f):
             )
 
         return f(*args, **kwargs, user=user)
+
+    return decorator
+
+
+def handle_memo(f):
+    @wraps(f)
+    def decorator(*args, **kwargs):
+        id_ = kwargs.get("id_")
+
+        if id_ is None:
+            return resp_json(
+                message="id is not given",
+                code=500
+            )
+
+        try:
+            id_ = int(id_)
+        except ValueError:
+            return resp_json(
+                message="malformed id value",
+                code=400
+            )
+
+        memo = Memo.query.filter_by(id=id_).first()
+
+        if memo is None:
+            return resp_json("memo not found", 404)
+        
+        kwargs.update({"memo": memo})
+        return f(*args, **kwargs)
 
     return decorator
