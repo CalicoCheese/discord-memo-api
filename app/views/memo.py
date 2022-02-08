@@ -12,7 +12,7 @@ import datetime
 bp = Blueprint("memo", __name__, url_prefix="/memo")
 
 
-@bp.get("/")
+@bp.get("")
 @handle_login
 def get(user):
     cur = request.args.get("after")
