@@ -33,7 +33,7 @@ class User(db.Model):
         nullable=False
     )
 
-    memos = db.relationship("Memo")
+    memos = db.relationship("Memo", backref="owner")
 
     def __repr__(self):
         return f"<User id={self.id}, discord_id={self.discord_id!r}>"
@@ -69,10 +69,13 @@ class Memo(db.Model):
         nullable=False
     )
 
+    def get_edit_timestamp(self):
+        return round(self.edit.timestamp)
+
     def to_json(self):
         return {
             "id": self.id,
-            "edit": round(self.edit.timestamp),
+            "edit": self.get_edit_timestamp(),
             "text": self.text
         }
 
