@@ -28,6 +28,8 @@ def get_user_from_discord(discord_id: str) -> User:
 
 def parse_token_from_header(headerval: str) -> str:
     # TODO: check if rsplit is obsolete. Added for the safety measure
+    if headerval is None:
+        headerval = ""
     headerval = headerval.rstrip()
     token_match = token_regex.fullmatch(headerval)
 
@@ -48,7 +50,7 @@ def verify_jwt(jwt: dict) -> bool:
 def handle_login(f):
     @wraps(f)
     def decorator(*args, **kwargs):
-        auth = request.headers.get("authorization")
+        auth = request.headers.get("authorization", "")
         token = parse_token_from_header(auth)
         if not token:
             return resp_json(
