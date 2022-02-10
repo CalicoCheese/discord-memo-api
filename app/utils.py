@@ -26,12 +26,12 @@ def get_user_from_discord(discord_id: str) -> User:
     return User.query.filter_by(discord_id=discord_id).first()
 
 
-def parse_token_from_header(headerval: str) -> str:
+def parse_token_from_header(header_value: str) -> str or None:
     # TODO: check if rsplit is obsolete. Added for the safety measure
-    if headerval is None:
-        headerval = ""
-    headerval = headerval.rstrip()
-    token_match = token_regex.fullmatch(headerval)
+    if header_value is None:
+        header_value = ""
+    header_value = header_value.rstrip()
+    token_match = token_regex.fullmatch(header_value)
 
     if token_match:
         return token_match.group(1)
