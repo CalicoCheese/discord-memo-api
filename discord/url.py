@@ -8,3 +8,10 @@ def auth():
         "?response_type=code" + \
         f"&client_id={CLIENT_ID}" + \
         f"&scope={OAUTH_SCOPE}"
+
+
+def invite():
+    return DISCORD_AUTH + \
+       f"?client_id={CLIENT_ID}" + \
+       "&permissions=0" + \
+       "&scope=bot"
