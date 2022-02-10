@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Blueprint
 from flask import request
 
@@ -9,6 +11,10 @@ from discord.parse import parse_user
 from app.token.payload import create
 from app.token.encode import encode
 from app.utils import resp_json
+from app.utils import parse_authorization
+
+from app import db
+from app.models import User
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -44,19 +50,106 @@ def callback():
             code=400
         )
 
-    payload, exp = create(
-        user=parse_user(
-            json=current_user(
-                token=token
-            )
+    user = parse_user(
+        json=current_user(
+            token=token
         )
     )
 
+    payload, exp = create(
+        user=user
+    )
+
+    u = User.query.filter_by(
+        discord_id=user.id
+    ).first()
+
+    if u is None:
+        return resp_json(
+            message="사용자 등록이 필요합니다.",
+            code=200,
+            data={
+                "token": encode(payload=payload),
+                "exp": exp
+            }
+        )
+
     return resp_json(
-        message="login success",
+        message="로그인 성공",
         code=201,
         data={
             "token": encode(payload=payload),
             "exp": exp
         }
+    )
+
+
+@bp.get("/check")
+def check():
+    token = parse_authorization()
+    if isinstance(token, tuple):
+        return token
+
+    try:
+        user = User.query.filter_by(
+            discord_id=token['user']['id']
+        ).first()
+    except KeyError:
+        return resp_json(
+            message="인증 토큰이 올바르지 않습니다.",
+            code=401,
+        )
+
+    if user is None:
+        return resp_json(
+            message="등록되지 않은 유저입니다.",
+            code=404,
+        )
+
+    return resp_json(
+        message="조회 성공",
+        code=200,
+        data={
+            "tos_agree": user.tos_agree,
+        }
+    )
+
+
+@bp.post("/update")
+def update():
+    token = parse_authorization()
+    if isinstance(token, tuple):
+        return token
+
+    try:
+        user = User.query.filter_by(
+            discord_id=token['user']['id']
+        ).first()
+    except KeyError:
+        return resp_json(
+            message="인증 토큰이 올바르지 않습니다.",
+            code=401,
+        )
+
+    if user is not None:
+        user.tos_agree = datetime.now()
+        db.session.commit()
+
+        return resp_json(
+            message="이미 등록된 유저입니다.",
+            code=400,
+            data=True
+        )
+
+    u = User()
+    u.discord_id = token['user']['id']
+    u.is_admin = False
+    u.tos_agree = datetime.now()
+
+    db.session.add(u)
+    db.session.commit()
+
+    return resp_json(
+        message="사용자 등록이 완료되었습니다.",
+        code=200,
     )
