@@ -9,7 +9,7 @@ import re
 from time import time
 from functools import wraps
 
-token_regex = re.compile(r"Bearer ([a-zA-Z0-9]+\.[a-zA-Z0-9]+\.[a-zA-Z0-9])")
+token_regex = re.compile(r"Bearer ([a-zA-Z0-9-_]+\.[a-zA-Z0-9-_]+\.[a-zA-Z0-9-_]+)")
 
 
 def resp_json(message: str = "", code: int = 200, data=None) -> tuple:
@@ -27,10 +27,9 @@ def get_user_from_discord(discord_id: str) -> User:
 
 
 def parse_token_from_header(header_value: str) -> str or None:
-    # TODO: check if rsplit is obsolete. Added for the safety measure
     if header_value is None:
         header_value = ""
-    header_value = header_value.rstrip()
+
     token_match = token_regex.fullmatch(header_value)
 
     if token_match:
