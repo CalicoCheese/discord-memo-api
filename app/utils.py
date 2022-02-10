@@ -46,24 +46,34 @@ def verify_jwt(jwt: dict) -> bool:
         return True
 
 
+def parse_authorization() -> dict or tuple:
+    auth = request.headers.get("authorization", "")
+    token = parse_token_from_header(auth)
+    if not token:
+        return resp_json(
+            message="token is required",
+            code=401
+        )
+
+    jwt_payload = decode(token=token)
+
+    if not verify_jwt(jwt_payload):
+        return resp_json(
+            message="token has been expired",
+            code=401
+        )
+
+    return jwt_payload
+
+
 def handle_login(f):
     @wraps(f)
     def decorator(*args, **kwargs):
-        auth = request.headers.get("authorization", "")
-        token = parse_token_from_header(auth)
-        if not token:
-            return resp_json(
-                message="token is required",
-                code=401
-            )
+        jwt_payload = parse_authorization()
 
-        jwt_payload = decode(token=token)
-
-        if not verify_jwt(jwt_payload):
-            return resp_json(
-                message="token has been expired",
-                code=401
-            )
+        if isinstance(jwt_payload, tuple):
+            # tuple == resp_json()
+            return jwt_payload
 
         user = get_user_from_discord(jwt_payload["user"]["id"])
 
