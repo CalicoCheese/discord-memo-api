@@ -15,6 +15,7 @@ from app.utils import parse_authorization
 
 from app import db
 from app.models import User
+from app.models import Notice
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -106,11 +107,27 @@ def check():
             code=404,
         )
 
+    tos = Notice.query.filter_by(
+        type=2
+    ).order_by(
+        Notice.id.desc()
+    ).first()
+
+    passed = False
+    skipped = False
+
+    if tos is None:
+        skipped = True
+    else:
+        passed = tos.date <= user.tos_agree
+
     return resp_json(
         message="조회 성공",
         code=200,
         data={
             "tos_agree": user.tos_agree,
+            "passed": passed,
+            "skipped": skipped,
         }
     )
 
