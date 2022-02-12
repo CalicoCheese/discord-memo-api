@@ -39,11 +39,7 @@ def parse_token_from_header(header_value: str) -> str or None:
 
 
 def verify_jwt(jwt: dict) -> bool:
-    if jwt['time']['exp'] < time():
-        return False
-
-    else:
-        return True
+    return jwt['time']['iat'] <= time() < jwt['time']['exp']
 
 
 def parse_authorization() -> dict or tuple:
