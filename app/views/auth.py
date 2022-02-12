@@ -91,15 +91,9 @@ def check():
     if isinstance(token, tuple):
         return token
 
-    try:
-        user = User.query.filter_by(
-            discord_id=token['user']['id']
-        ).first()
-    except KeyError:
-        return resp_json(
-            message="인증 토큰이 올바르지 않습니다.",
-            code=401,
-        )
+    user = User.query.filter_by(
+        discord_id=token['user']['id']
+    ).first()
 
     if user is None:
         return resp_json(
