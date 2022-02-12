@@ -52,12 +52,6 @@ class Memo(db.Model):
         db.ForeignKey("user.id")
     )
 
-    create = db.Column(
-        db.DateTime,
-        nullable=False,
-        default=func.now()
-    )
-
     edit = db.Column(
         db.DateTime,
         nullable=False,
