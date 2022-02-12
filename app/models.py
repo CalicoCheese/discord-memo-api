@@ -33,6 +33,12 @@ class User(db.Model):
         nullable=False
     )
 
+    password = db.Column(
+        db.String(128),
+        nullable=False,
+        default="#"
+    )
+
     memos = db.relationship("Memo", backref="owner")
 
     def __repr__(self):
@@ -63,6 +69,12 @@ class Memo(db.Model):
         nullable=False
     )
 
+    encrypted = db.Column(
+        db.Boolean,
+        nullable=False,
+        default=False
+    )
+
     def get_edit_timestamp(self):
         return round(self.edit.timestamp)
 
@@ -70,7 +82,8 @@ class Memo(db.Model):
         return {
             "id": self.id,
             "edit": self.get_edit_timestamp(),
-            "text": self.text
+            "text": self.text,
+            "encrypted": self.encrypted
         }
 
     def __repr__(self):
