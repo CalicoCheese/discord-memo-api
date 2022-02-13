@@ -2,6 +2,7 @@ from datetime import datetime
 
 from flask import Blueprint
 from flask import request
+from sqlalchemy import and_
 
 from app import db
 from app.utils import handle_login
@@ -25,7 +26,12 @@ def get(user):
     except ValueError:
         return resp_json("malformed after value", 400)
 
-    memos = Memo.query.filter(Memo.id > cur).all()
+    memos = Memo.query.filter(
+        and_(
+            Memo.id > cur,
+            Memo.owner_id == user.id
+        )
+    ).limit(10).all()
 
     payload = [memo.to_json() for memo in memos]
 
