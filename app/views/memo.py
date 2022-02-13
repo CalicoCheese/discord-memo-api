@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Blueprint
 from flask import request
 
@@ -6,8 +8,6 @@ from app.utils import handle_login
 from app.utils import handle_memo
 from app.utils import resp_json
 from app.models import Memo
-
-import datetime
 
 bp = Blueprint("memo", __name__, url_prefix="/memo")
 
@@ -58,7 +58,7 @@ def edit(user, memo, id_):
     if payload is None:
         return resp_json("malformed json payload", 400)
 
-    now = datetime.datetime.now()
+    now = datetime.now()
 
     if memo.get_edit_timestamp() != payload['edit']:
         strftime = now.strftime("%Y/%m/%d %H:%M:%S")
