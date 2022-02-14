@@ -1,12 +1,12 @@
 from jwt import encode as _encode
 
-from . import SECRET_KEY
+from . import JWT_SECRET
 from . import ALGORITHM
 
 
 def encode(payload: dict) -> str:
     return _encode(
         payload=payload,
-        key=SECRET_KEY,
+        key=JWT_SECRET,
         algorithm=ALGORITHM,
     )

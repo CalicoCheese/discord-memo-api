@@ -1,4 +1,4 @@
-from .secret_key import SECRET_KEY as _SECRET_KEY
+from .jwt_secret import get
 
-SECRET_KEY = _SECRET_KEY.hex()
+JWT_SECRET = get()
 ALGORITHM = "HS256"

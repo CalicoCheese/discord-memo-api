@@ -1,4 +1,4 @@
-.SECRET_KEY
+.JWT_SECRET
 
 # for dotenv
 .env
