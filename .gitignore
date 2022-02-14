@@ -1,4 +1,5 @@
 .JWT_SECRET
+.BOT_SECRET
 
 # for dotenv
 .env

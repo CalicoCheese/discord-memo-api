@@ -4,6 +4,7 @@ from flask import jsonify
 from app.models import User
 from app.models import Memo
 from app.token.decode import decode
+from app.bot import verify
 
 import re
 from time import time
@@ -109,6 +110,23 @@ def handle_memo(f):
             return resp_json("memo not found", 404)
         
         kwargs.update({"memo": memo})
+        return f(*args, **kwargs)
+
+    return decorator
+
+
+def handle_bot_verify(f):
+    @wraps(f)
+    def decorator(*args, **kwargs):
+        auth = request.headers.get("authorization", "")
+        after_bearer = auth[7:]
+
+        if not verify(secret=after_bearer):
+            return resp_json(
+                message="failed to verify bot",
+                code=403
+            )
+
         return f(*args, **kwargs)
 
     return decorator
