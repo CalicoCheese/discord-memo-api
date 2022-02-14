@@ -96,11 +96,17 @@ def handle_memo(f):
     @wraps(f)
     def decorator(*args, **kwargs):
         id_ = kwargs.get("id_")
-
         if id_ is None:
             return resp_json(
                 message="id is not given",
                 code=500
+            )
+
+        user: User = kwargs.get("user")
+        if user is None:
+            return resp_json(
+                message="login required",
+                code=401
             )
 
         try:
@@ -111,7 +117,10 @@ def handle_memo(f):
                 code=400
             )
 
-        memo = Memo.query.filter_by(id=id_).first()
+        memo = Memo.query.filter_by(
+            id=id_,
+            owner_id=user.id,
+        ).first()
 
         if memo is None:
             return resp_json("memo not found", 404)
