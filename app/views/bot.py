@@ -1,5 +1,4 @@
 from flask import Blueprint
-from flask import Blueprint
 from flask import request
 
 from discord.url import invite
