@@ -49,7 +49,7 @@ def get_one(user, memo, id_):
 @handle_login
 @handle_memo
 def delete(user, memo, id_):
-    memo.delete()
+    db.session.delete(memo)
     db.session.commit()
 
     return resp_json("successfully deleted the memo")
