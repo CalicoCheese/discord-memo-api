@@ -50,7 +50,7 @@ def get_one(user, memo, id_):
 @handle_memo
 def delete(user, memo, id_):
     memo.delete()
-    db.commit()
+    db.session.commit()
 
     return resp_json("successfully deleted the memo")
 
@@ -76,6 +76,9 @@ def edit(user, memo, id_):
 
     memo.edit = now
 
-    db.commit()
+    db.session.commit()
 
-    return resp_json("successfully edited the memo", 201)
+    return resp_json(
+        message="successfully edited the memo",
+        code=201
+    )
