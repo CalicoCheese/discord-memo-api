@@ -1,14 +1,15 @@
+import re
+from time import time
+from functools import wraps
+
 from flask import request
 from flask import jsonify
+from jwt.exceptions import InvalidSignatureError
 
 from app.models import User
 from app.models import Memo
 from app.token.decode import decode
 from app.bot import verify
-
-import re
-from time import time
-from functools import wraps
 
 token_regex = re.compile(r"Bearer ([a-zA-Z0-9-_]+\.[a-zA-Z0-9-_]+\.[a-zA-Z0-9-_]+)")
 
@@ -52,7 +53,13 @@ def parse_authorization() -> dict or tuple:
             code=401
         )
 
-    jwt_payload = decode(token=token)
+    try:
+        jwt_payload = decode(token=token)
+    except InvalidSignatureError:
+        return resp_json(
+            message="Invalid token detected",
+            code=401,
+        )
 
     if not verify_jwt(jwt_payload):
         return resp_json(
