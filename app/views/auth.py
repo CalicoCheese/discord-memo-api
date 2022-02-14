@@ -124,7 +124,8 @@ def check():
             "tos_agree": user.tos_agree,
             "passed": passed,
             "skipped": skipped,
-            "password": user.password == "#"
+            "password": user.password == "#",
+            "admin": user.is_admin
         }
     )
 
