@@ -76,7 +76,7 @@ class Memo(db.Model):
     )
 
     def get_edit_timestamp(self):
-        return round(self.edit.timestamp)
+        return round(self.edit.timestamp())
 
     def to_json(self):
         return {
