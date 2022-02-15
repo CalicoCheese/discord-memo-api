@@ -109,14 +109,6 @@ def handle_memo(f):
                 code=401
             )
 
-        try:
-            id_ = int(id_)
-        except ValueError:
-            return resp_json(
-                message="malformed id value",
-                code=400
-            )
-
         memo = Memo.query.filter_by(
             id=id_,
             owner_id=user.id,

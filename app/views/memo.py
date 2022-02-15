@@ -38,27 +38,27 @@ def get(user):
     return resp_json(data=payload)
 
 
-@bp.get("/<id_>")
+@bp.get("/<int:id_>")
 @handle_login
 @handle_memo
-def get_one(user, memo, id_):
+def get_one(user, memo: Memo, id_: int):
     return resp_json(data=memo.to_json())
 
 
-@bp.delete("/<id_>")
+@bp.delete("/<int:id_>")
 @handle_login
 @handle_memo
-def delete(user, memo, id_):
+def delete(user, memo: Memo, id_: int):
     db.session.delete(memo)
     db.session.commit()
 
     return resp_json("successfully deleted the memo")
 
 
-@bp.put("/<id_>")
+@bp.put("/<int:id_>")
 @handle_login
 @handle_memo
-def edit(user, memo, id_):
+def edit(user, memo: Memo, id_: int):
     payload = request.get_json(silent=True)
 
     if payload is None:
