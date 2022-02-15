@@ -100,9 +100,14 @@ def update(user: User, notice: Notice, id_: int, type_=TP_NOTICE):
         return resp_json(code=403, message="당신은 관리자가 아닙니다.")
 
     json = request.json
+
+    notice.date = datetime.now()
+    notice.title = json.get("title", notice.title).strip()[:40]
+    notice.text = json.get("text", notice.text).strip()
+
+    db.session.commit()
+
     return resp_json(
-        data={
-            "db": notice.to_json(),
-            "json": json
-        }
+        message="저장 성공",
+        code=201
     )
