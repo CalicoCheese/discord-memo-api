@@ -8,6 +8,8 @@ from jwt.exceptions import InvalidSignatureError
 
 from app.models import User
 from app.models import Memo
+from app.models import Notice
+from app.models import TP_LIST
 from app.token.decode import decode
 from app.bot import verify
 
@@ -135,6 +137,37 @@ def handle_bot_verify(f):
                 code=403
             )
 
+        return f(*args, **kwargs)
+
+    return decorator
+
+
+def handle_notice(f):
+    @wraps(f)
+    def decorator(*args, **kwargs):
+        id_ = kwargs.get("id_")
+        if id_ is None:
+            return resp_json(
+                message="id is not given",
+                code=500
+            )
+
+        type_ = kwargs.get("type_")
+        if type_ in TP_LIST:
+            return resp_json(
+                message="notice type is incorrect",
+                code=500
+            )
+
+        notice = Notice.query.filter_by(
+            id=id_,
+            type=type_,
+        ).first()
+
+        if notice is None:
+            return resp_json("notice not found", 404)
+
+        kwargs.update({"notice": notice})
         return f(*args, **kwargs)
 
     return decorator

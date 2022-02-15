@@ -1,6 +1,13 @@
 from sqlalchemy import func
 from app import db
 
+# # # Value for Notice Table # # #
+TP_NOTICE = 0
+TP_PRIVACY = 1
+TP_TOS = 2
+TP_LIST = [TP_NOTICE, TP_PRIVACY, TP_TOS]
+# # # # # # # # # # # # # # # # #
+
 
 class User(db.Model):
     id = db.Column(
@@ -124,6 +131,17 @@ class Notice(db.Model):
         db.Text,
         nullable=False
     )
+
+    def get_timestamp(self):
+        return round(self.date.timestamp())
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "date": self.get_timestamp(),
+            "title": self.title,
+            "text": self.text,
+        }
 
     def __repr__(self):
         return f"<Notice id={self.id}, type={self.type!r}>"
