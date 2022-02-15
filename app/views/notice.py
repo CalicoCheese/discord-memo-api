@@ -38,7 +38,7 @@ def get_list():
     payload = [
         dict(
             id=notice.id,
-            date=notice.get_timestamp(),
+            date=round(notice.date.timestamp()),
             title=notice.title
         ) for notice in n
     ]
