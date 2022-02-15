@@ -25,7 +25,6 @@ def get_list():
 
     n = Notice.query.with_entities(
         Notice.id,
-        Notice.type,
         Notice.date,
         Notice.title,
     ).filter(
