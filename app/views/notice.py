@@ -28,14 +28,12 @@ def get_list():
         Notice.type,
         Notice.date,
         Notice.title,
-    ).order_by(
-        Notice.id.desc()
     ).filter(
         and_(
             Notice.id > cur,
             Notice.type == TP_NOTICE
         )
-    ).limit(10).all()
+    ).limit(20).all()
 
     payload = [
         dict(
