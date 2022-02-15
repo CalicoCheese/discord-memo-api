@@ -95,7 +95,7 @@ def create(user: User):
 @bp.post("/<int:id_>")
 @handle_login
 @handle_notice
-def update(user: User, notice: Notice, id_: int, type_=TP_NOTICE):
+def update(user: User, notice: Notice, id_: int):
     if not user.is_admin:
         return resp_json(code=403, message="당신은 관리자가 아닙니다.")
 
@@ -110,4 +110,20 @@ def update(user: User, notice: Notice, id_: int, type_=TP_NOTICE):
     return resp_json(
         message="저장 성공",
         code=201
+    )
+
+
+@bp.delete("/<int:id_>")
+@handle_login
+@handle_notice
+def delete(user: User, notice: Notice, id_: int):
+    if not user.is_admin:
+        return resp_json(code=403, message="당신은 관리자가 아닙니다.")
+
+    db.session.delete(notice)
+    db.session.commit()
+
+    return resp_json(
+        message="삭제 완료",
+        code=200
     )
