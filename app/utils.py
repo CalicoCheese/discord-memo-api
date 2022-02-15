@@ -9,7 +9,7 @@ from jwt.exceptions import InvalidSignatureError
 from app.models import User
 from app.models import Memo
 from app.models import Notice
-from app.models import TP_LIST
+from app.models import TP_NOTICE
 from app.token.decode import decode
 from app.bot import verify
 
@@ -152,16 +152,9 @@ def handle_notice(f):
                 code=500
             )
 
-        type_ = kwargs.get("type_")
-        if type_ in TP_LIST:
-            return resp_json(
-                message="notice type is incorrect",
-                code=500
-            )
-
         notice = Notice.query.filter_by(
             id=id_,
-            type=type_,
+            type=TP_NOTICE,
         ).first()
 
         if notice is None:

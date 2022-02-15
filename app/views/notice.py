@@ -48,7 +48,7 @@ def get_list():
 
 @bp.get("/<int:id_>")
 @handle_notice
-def get_one(notice: Notice, id_: int, type_=TP_NOTICE):
+def get_one(notice: Notice, id_: int):
     return resp_json(data=notice.to_json())
 
 
