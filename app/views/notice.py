@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Blueprint
 from flask import request
 from sqlalchemy import and_
@@ -59,10 +61,36 @@ def create(user: User):
         return resp_json(code=403, message="당신은 관리자가 아닙니다.")
 
     json = request.json
+
+    title = json.get("title", "").strip()[:40]
+    if len(title) == 0:
+        return resp_json(
+            message="공지사항의 제목이 비었습니다.",
+            code=400
+        )
+
+    text = json.get("text", "").strip()
+    if len(text) == 0:
+        return resp_json(
+            message="공지사항의 본문이 비었습니다.",
+            code=400
+        )
+
+    n = Notice()
+    n.type = TP_NOTICE
+    n.date = datetime.now()
+    n.title = title
+    n.text = text
+
+    db.session.add(n)
+    db.session.commit()
+
     return resp_json(
+        message="생성 완료",
+        code=201,
         data={
-            "json": json
-        }
+            "id": n.id
+        },
     )
 
 
