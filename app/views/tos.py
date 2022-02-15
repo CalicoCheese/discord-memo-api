@@ -2,7 +2,6 @@ from datetime import datetime
 
 from flask import Blueprint
 from flask import request
-from sqlalchemy import and_
 
 from app import db
 from app.models import User
@@ -15,29 +14,39 @@ from app.utils import handle_tos
 bp = Blueprint("tos", __name__, url_prefix="/tos")
 
 
-@bp.get("/code")
-def get_code():
-    n = Notice.query.with_entities(
-        Notice.id,
-        Notice.date,
-    ).filter_by(
-        type=TP_TOS
-    ).all()
-
-    payload = [
-        dict(
-            id=notice.id,
-            date=round(notice.date.timestamp()),
-        ) for notice in n
-    ]
-
-    return resp_json(data=payload)
-
-
 @bp.get("/<int:id_>")
 @handle_tos
-def get_one(tos: Notice, id_: int):
+def get_tos_by_id(tos: Notice, id_: int):
     return resp_json(data=tos.to_json())
+
+
+@bp.get("")
+def get_tos():
+    try:
+        before = request.headers.get("x-tos-before", None)
+        before = round(float(before))
+        before = datetime.fromtimestamp(before)
+    except TypeError:
+        return resp_json(
+            message="올바른 날짜가 아닙니다.",
+            code=400
+        )
+
+    n = Notice.query.filter_by(
+        type=TP_TOS
+    ).filter(
+        Notice.date <= before
+    ).first()
+
+    if n is None:
+        return resp_json(
+            message="등록된 서비스 이용약관이 없습니다.",
+            code=400
+        )
+
+    return resp_json(
+        data=n.to_json()
+    )
 
 
 @bp.post("")
@@ -68,7 +77,8 @@ def create(user: User):
         message="생성 완료",
         code=201,
         data={
-            "id": n.id
+            "id": n.id,
+            "date": n.date
         },
     )
 
