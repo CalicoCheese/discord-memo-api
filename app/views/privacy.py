@@ -8,7 +8,7 @@ bp = Blueprint("privacy", __name__, url_prefix="/privacy")
 
 
 @bp.get("")
-def get_latest_tos():
+def get_latest_privacy():
     n = Notice.query.filter_by(
         type=TP_PRIVACY
     ).order_by(
