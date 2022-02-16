@@ -2,7 +2,6 @@ from datetime import datetime
 
 from flask import Blueprint
 from flask import request
-from sqlalchemy import and_
 
 from app import db
 from app.models import User
