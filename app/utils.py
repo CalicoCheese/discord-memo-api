@@ -9,9 +9,6 @@ from jwt.exceptions import InvalidSignatureError
 from app.models import User
 from app.models import Memo
 from app.models import Notice
-from app.models import TP_NOTICE
-from app.models import TP_PRIVACY
-from app.models import TP_TOS
 from app.token.decode import decode
 from app.bot import verify
 
@@ -156,37 +153,12 @@ def handle_notice(f):
 
         notice = Notice.query.filter_by(
             id=id_,
-            type=TP_NOTICE,
         ).first()
 
         if notice is None:
             return resp_json("notice not found", 404)
 
         kwargs.update({"notice": notice})
-        return f(*args, **kwargs)
-
-    return decorator
-
-
-def handle_tos(f):
-    @wraps(f)
-    def decorator(*args, **kwargs):
-        id_ = kwargs.get("id_")
-        if id_ is None:
-            return resp_json(
-                message="id is not given",
-                code=500
-            )
-
-        notice = Notice.query.filter_by(
-            id=id_,
-            type=TP_TOS,
-        ).first()
-
-        if notice is None:
-            return resp_json("ToS not found", 404)
-
-        kwargs.update({"tos": notice})
         return f(*args, **kwargs)
 
     return decorator

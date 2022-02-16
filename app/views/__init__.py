@@ -3,6 +3,7 @@ __all__ = [
     "bot",
     "memo",
     "notice",
+    "privacy",
     "tos",
 ]
 

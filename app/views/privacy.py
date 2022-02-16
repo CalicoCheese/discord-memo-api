@@ -1,23 +1,23 @@
 from flask import Blueprint
 
 from app.models import Notice
-from app.models import TP_TOS
+from app.models import TP_PRIVACY
 from app.utils import resp_json
 
-bp = Blueprint("tos", __name__, url_prefix="/tos")
+bp = Blueprint("privacy", __name__, url_prefix="/privacy")
 
 
 @bp.get("")
 def get_latest_tos():
     n = Notice.query.filter_by(
-        type=TP_TOS
+        type=TP_PRIVACY
     ).order_by(
         Notice.id.desc()
     ).first()
 
     if n is None:
         return resp_json(
-            message="등록된 서비스 이용약관이 없습니다.",
+            message="등록된 개인정보 처리방침이 없습니다.",
             code=400
         )
 

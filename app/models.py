@@ -138,6 +138,7 @@ class Notice(db.Model):
     def to_json(self):
         return {
             "id": self.id,
+            "type": self.type,
             "date": self.get_timestamp(),
             "title": self.title,
             "text": self.text,

@@ -7,7 +7,7 @@ from sqlalchemy import and_
 from app import db
 from app.models import User
 from app.models import Notice
-from app.models import TP_NOTICE
+from app.models import TP_LIST
 from app.utils import resp_json
 from app.utils import handle_login
 from app.utils import handle_notice
@@ -18,29 +18,41 @@ bp = Blueprint("notice", __name__, url_prefix="/notice")
 @bp.get("")
 def get_list():
     try:
-        cur = request.args.get("after", "0")
-        cur = int(cur)
+        page = request.args.get("page", "0")
+        page = int(page)
+
+        if page < 1:
+            page = 1
     except TypeError:
-        cur = 0
+        page = 1
 
     n = Notice.query.with_entities(
         Notice.id,
+        Notice.type,
         Notice.date,
         Notice.title,
-    ).filter(
-        and_(
-            Notice.id > cur,
-            Notice.type == TP_NOTICE
-        )
-    ).limit(20).all()
+    ).order_by(
+        Notice.id.desc()
+    ).paginate(
+        page=page,
+        per_page=20,
+        error_out=False
+    )
 
-    payload = [
-        dict(
-            id=notice.id,
-            date=round(notice.date.timestamp()),
-            title=notice.title
-        ) for notice in n
-    ]
+    payload = {
+        "page": {
+            "max": n.pages,
+            "this": n.page
+        },
+        "notice": [
+            dict(
+                id=notice.id,
+                type=notice.type,
+                date=round(notice.date.timestamp()),
+                title=notice.title
+            ) for notice in n.items
+        ]
+    }
 
     return resp_json(data=payload)
 
@@ -59,6 +71,16 @@ def create(user: User):
 
     json = request.json
 
+    try:
+        type_ = int(json.get("type"))
+        if type_ not in TP_LIST:
+            raise ValueError
+    except (ValueError, TypeError):
+        return resp_json(
+            message="형식이 올바르지 않습니다.",
+            code=400
+        )
+
     title = json.get("title", "").strip()[:40]
     if len(title) == 0:
         return resp_json(
@@ -74,7 +96,7 @@ def create(user: User):
         )
 
     n = Notice()
-    n.type = TP_NOTICE
+    n.type = type_
     n.date = datetime.now()
     n.title = title
     n.text = text
@@ -100,7 +122,18 @@ def update(user: User, notice: Notice, id_: int):
 
     json = request.json
 
+    try:
+        type_ = int(json.get("type"))
+        if type_ not in TP_LIST:
+            raise ValueError
+    except (ValueError, TypeError):
+        return resp_json(
+            message="형식이 올바르지 않습니다.",
+            code=400
+        )
+
     notice.date = datetime.now()
+    notice.type = json.get("type", notice.type)
     notice.title = json.get("title", notice.title).strip()[:40]
     notice.text = json.get("text", notice.text).strip()
 
