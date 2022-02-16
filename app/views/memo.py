@@ -82,3 +82,6 @@ def edit(user, memo: Memo, id_: int):
         message="successfully edited the memo",
         code=201
     )
+
+
+# TODO:remove all memo
