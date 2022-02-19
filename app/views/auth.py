@@ -11,10 +11,12 @@ from discord.parse import parse_user
 from app.token.payload import create
 from app.token.encode import encode
 from app.utils import resp_json
+from app.utils import handle_login
 from app.utils import parse_authorization
 
 from app import db
 from app.models import User
+from app.models import Memo
 from app.models import Notice
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
@@ -164,4 +166,26 @@ def update():
     return resp_json(
         message="사용자 등록이 완료되었습니다.",
         code=200,
+    )
+
+
+@bp.delete("/@me")
+@handle_login
+def delete_me(user: User):
+    c = Memo.query.filter_by(
+        owner_id=user.id
+    ).count()
+
+    if c != 0:
+        return resp_json(
+            message="계정을 삭제하려면 모든 메모를 삭제해야 합니다.",
+            code=400
+        )
+
+    db.session.delete(user)
+    db.session.commit()
+
+    return resp_json(
+        message="등록된 계정을 삭제했습니다.",
+        code=200
     )
