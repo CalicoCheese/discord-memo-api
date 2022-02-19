@@ -84,4 +84,16 @@ def edit(user, memo: Memo, id_: int):
     )
 
 
-# TODO:remove all memo
+@bp.delete("")
+@handle_login
+def delete_all_memo(user):
+    Memo.query.filter_by(
+        owner_id=user.id
+    ).delete()
+
+    db.session.commit()
+
+    return resp_json(
+        message="모든 메모가 삭제되었습니다.",
+        code=200
+    )
