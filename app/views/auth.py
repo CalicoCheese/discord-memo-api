@@ -1,5 +1,4 @@
 from datetime import datetime
-from hashlib import sha512
 
 from flask import Blueprint
 from flask import request
@@ -13,7 +12,6 @@ from app.token.payload import create
 from app.token.encode import encode
 from app.utils import resp_json
 from app.utils import parse_authorization
-from app.utils import handle_login
 
 from app import db
 from app.models import User
@@ -124,7 +122,6 @@ def check():
             "tos_agree": user.tos_agree,
             "passed": passed,
             "skipped": skipped,
-            "password": user.password == "#",
             "admin": user.is_admin
         }
     )
@@ -160,7 +157,6 @@ def update():
     u.discord_id = token['user']['id']
     u.is_admin = False
     u.tos_agree = datetime.now()
-    u.password = "#"
 
     db.session.add(u)
     db.session.commit()
@@ -168,70 +164,4 @@ def update():
     return resp_json(
         message="사용자 등록이 완료되었습니다.",
         code=200,
-    )
-
-
-@bp.get("/password")
-@handle_login
-def check_password(user):
-    if user.password == "#":
-        return resp_json(
-            message="메모 비밀번호를 설정 해야 합니다!",
-            code=400
-        )
-
-    pass_hashed = request.headers.get("x-dm-password", "")
-    if len(pass_hashed) != 128:
-        return resp_json(
-            message="올바르지 않은 비밀번호 해시가 전송되었습니다.",
-            code=400,
-            data={
-                "pushLock": True
-            }
-        )
-
-    pass_hashed = sha512(pass_hashed.encode()).hexdigest()
-
-    if pass_hashed == user.password:
-        return resp_json(
-            message="비밀번호가 일치합니다.",
-            code=200
-        )
-    else:
-        return resp_json(
-            message="비밀번호가 일치하지 않습니다.",
-            code=400,
-            data={
-                "pushLock": True
-            }
-        )
-
-
-@bp.post("/password")
-@handle_login
-def set_password(user):
-    if user.password != "#":
-        return resp_json(
-            message="메모 비밀번호를 변경 할 수 없습니다!",
-            code=400
-        )
-
-    pass_hashed = request.headers.get("x-dm-password", "")
-    if len(pass_hashed) != 128:
-        return resp_json(
-            message="올바르지 않은 비밀번호가 전송되었습니다.",
-            code=400,
-            data={
-                "pushLock": True
-            }
-        )
-
-    pass_hashed = sha512(pass_hashed.encode()).hexdigest()
-
-    user.password = pass_hashed
-    db.session.commit()
-
-    return resp_json(
-        message="비밀번호가 설정되었습니다!",
-        code=201
     )

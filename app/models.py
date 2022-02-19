@@ -40,12 +40,6 @@ class User(db.Model):
         nullable=False
     )
 
-    password = db.Column(
-        db.String(128),
-        nullable=False,
-        default="#"
-    )
-
     memos = db.relationship("Memo", backref="owner")
 
     def __repr__(self):
