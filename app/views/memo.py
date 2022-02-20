@@ -75,11 +75,45 @@ def edit(user, memo: Memo, id_: int):
         memo.text = payload['text']
 
     memo.edit = now
+    memo.encrypted = payload['encrypted']
 
     db.session.commit()
 
     return resp_json(
         message="successfully edited the memo",
+        code=201
+    )
+
+
+@bp.post("")
+@handle_login
+def create(user):
+    payload = request.get_json(silent=True)
+
+    text = payload.get("text", "").strip()
+    if len(text) == 0:
+        return resp_json(
+            message="빈 메모는 생성 할 수 없습니다.",
+            code=400
+        )
+
+    encrypted = payload.get("encrypted", False)
+    if not isinstance(encrypted, bool):
+        return resp_json(
+            message="암호화 여부의 형식이 올바르지 않습니다.",
+            code=400
+        )
+
+    m = Memo()
+    m.owner_id = user.id
+    m.text = text
+    m.encrypted = encrypted
+
+    db.session.add(m)
+    db.session.commit()
+
+    return resp_json(
+        message="메모를 생성했습니다.",
         code=201
     )
 
