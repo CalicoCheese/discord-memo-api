@@ -60,22 +60,42 @@ def delete(user, memo: Memo, id_: int):
 @handle_memo
 def edit(user, memo: Memo, id_: int):
     payload = request.get_json(silent=True)
-
     if payload is None:
-        return resp_json("malformed json payload", 400)
+        return resp_json(
+            message="malformed json payload",
+            code=400
+        )
+
+    text = payload.get("text", "").strip()
+    if len(text) == 0:
+        db.session.delete(memo)
+        db.session.commit()
+
+        return resp_json(
+            message="메모를 삭제했습니다.",
+            code=200
+        )
+
+    encrypted = payload.get("encrypted", False)
+    if not isinstance(encrypted, bool):
+        return resp_json(
+            message="암호화 여부의 형식이 올바르지 않습니다.",
+            code=400
+        )
 
     now = datetime.now()
+    edit_ts = payload.get("edit", memo.edit)
 
-    if memo.get_edit_timestamp() != payload['edit']:
+    if memo.get_edit_timestamp() != edit_ts:
         strftime = now.strftime("%Y/%m/%d %H:%M:%S")
         memo.text = f"{memo.text}\n\n" \
                     f"=== Edited on {strftime} ===\n\n" \
-                    f"{payload['text']}"
+                    f"{text}"
     else:
-        memo.text = payload['text']
+        memo.text = text
 
     memo.edit = now
-    memo.encrypted = payload['encrypted']
+    memo.encrypted = encrypted
 
     db.session.commit()
 
