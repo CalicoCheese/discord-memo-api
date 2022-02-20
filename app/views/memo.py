@@ -19,12 +19,18 @@ def get(user):
     cur = request.args.get("after")
 
     if not cur:
-        return resp_json("required argument is not given", 400)
+        return resp_json(
+            message="required argument is not given",
+            code=400
+        )
 
     try:
         cur = int(cur)
     except ValueError:
-        return resp_json("malformed after value", 400)
+        return resp_json(
+            message="malformed after value",
+            code=400
+        )
 
     memos = Memo.query.filter(
         and_(
@@ -52,7 +58,11 @@ def delete(user, memo: Memo, id_: int):
     db.session.delete(memo)
     db.session.commit()
 
-    return resp_json("successfully deleted the memo")
+    # return resp_json("successfully deleted the memo")
+    return resp_json(
+        message="성공적으로 메모를 삭제했습니다.",
+        code=200
+    )
 
 
 @bp.put("/<int:id_>")
@@ -100,7 +110,8 @@ def edit(user, memo: Memo, id_: int):
     db.session.commit()
 
     return resp_json(
-        message="successfully edited the memo",
+        # message="successfully edited the memo",
+        message="성공적으로 메모를 수정했습니다.",
         code=201
     )
 
