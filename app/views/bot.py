@@ -8,6 +8,7 @@ from app.models import Memo
 from app.bot.tuples import BotRequest
 from app.utils import resp_json
 from app.utils import handle_bot_verify
+from app.aes import MemoAES
 
 bp = Blueprint("bot", __name__, url_prefix="/bot")
 
@@ -38,19 +39,28 @@ def create():
 
     if u is None:
         return resp_json(
+            message="등록되지 않은 유저 입니다.",
             code=400,
-            message="등록되지 않은 유저 입니다."
         )
+
+    text = json.text.strip()
+    if len(text) == 0:
+        return resp_json(
+            message="빈 메모는 생성 할 수 없습니다.",
+            code=400
+        )
+
+    enc = MemoAES(text=text)
 
     m = Memo()
     m.owner_id = u.id
-    m.text = json.text.strip()
+    m.text = enc.payload
     m.encrypted = False
 
     db.session.add(m)
     db.session.commit()
 
     return resp_json(
+        message="메모 등록 성공",
         code=201,
-        message="메모 등록 성공"
     )

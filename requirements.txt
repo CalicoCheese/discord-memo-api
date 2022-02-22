@@ -6,8 +6,12 @@
 #
 alembic==1.7.6
     # via flask-migrate
+cffi==1.15.0
+    # via gevent
 click==8.0.3
     # via flask
+colorama==0.4.4
+    # via click
 flask==2.0.2
     # via
     #   -r requirements.in
@@ -30,10 +34,6 @@ greenlet==1.1.2
     #   sqlalchemy
 gunicorn==20.1.0
     # via -r requirements.in
-importlib-metadata==4.10.1
-    # via alembic
-importlib-resources==5.4.0
-    # via alembic
 itsdangerous==2.0.1
     # via flask
 jinja2==3.0.3
@@ -45,6 +45,10 @@ markupsafe==2.0.1
     #   jinja2
     #   mako
 mysqlclient==2.1.0
+    # via -r requirements.in
+pycparser==2.21
+    # via cffi
+pycryptodomex==3.14.1
     # via -r requirements.in
 pyjwt==2.3.0
     # via -r requirements.in
@@ -58,13 +62,9 @@ sqlalchemy==1.4.31
     #   flask-sqlalchemy
 werkzeug==2.0.2
     # via flask
-zipp==3.7.0
-    # via
-    #   importlib-metadata
-    #   importlib-resources
-zope.event==4.5.0
+zope-event==4.5.0
     # via gevent
-zope.interface==5.4.0
+zope-interface==5.4.0
     # via gevent
 
 # The following packages are considered to be unsafe in a requirements file:
