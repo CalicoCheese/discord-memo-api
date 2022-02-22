@@ -50,7 +50,8 @@ def parse_authorization() -> dict or tuple:
     token = parse_token_from_header(auth)
     if not token:
         return resp_json(
-            message="token is required",
+            # message="token is required",
+            message="인증 토큰이 필요합니다.",
             code=401
         )
 
@@ -86,7 +87,8 @@ def handle_login(f):
 
         if not user:
             return resp_json(
-                message="failed to query a user",
+                # message="failed to query a user",
+                message="등록된 유저가 아닙니다.",
                 code=500
             )
 
