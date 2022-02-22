@@ -58,13 +58,15 @@ def parse_authorization() -> dict or tuple:
         jwt_payload = decode(token=token)
     except InvalidSignatureError:
         return resp_json(
-            message="Invalid token detected",
+            # message="Invalid token detected",
+            message="잘못된 인증 토큰이 감지되었습니다.",
             code=401,
         )
 
     if not verify_jwt(jwt_payload):
         return resp_json(
-            message="token has been expired",
+            # message="token has been expired",
+            message="인증 토큰이 만료되었습니다.",
             code=401
         )
 
@@ -106,7 +108,8 @@ def handle_memo(f):
         user: User = kwargs.get("user")
         if user is None:
             return resp_json(
-                message="login required",
+                # message="login required",
+                message="로그인이 필요합니다.",
                 code=401
             )
 
@@ -116,7 +119,11 @@ def handle_memo(f):
         ).first()
 
         if memo is None:
-            return resp_json("memo not found", 404)
+            return resp_json(
+                # message="memo not found",
+                message="해당 메모를 발견하지 못 했습니다.",
+                code=404
+            )
         
         kwargs.update({"memo": memo})
         return f(*args, **kwargs)
@@ -156,7 +163,11 @@ def handle_notice(f):
         ).first()
 
         if notice is None:
-            return resp_json("notice not found", 404)
+            return resp_json(
+                # message="notice not found",
+                message="해당 공지사항은 삭제되었거나 등록된 적이 없습니다.",
+                code=404
+            )
 
         kwargs.update({"notice": notice})
         return f(*args, **kwargs)
