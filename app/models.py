@@ -41,7 +41,7 @@ class User(db.Model):
         nullable=False
     )
 
-    memos = db.relationship("Memo", backref="owner")
+    # memos = db.relationship("Memo", backref="owner")
 
     def __repr__(self):
         return f"<User id={self.id}, discord_id={self.discord_id!r}>"
