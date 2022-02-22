@@ -77,6 +77,9 @@ def callback():
             }
         )
 
+    u.last_login = datetime.now()
+    db.session.commit()
+
     return resp_json(
         message="로그인 성공",
         code=201,

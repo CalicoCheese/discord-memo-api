@@ -41,6 +41,12 @@ class User(db.Model):
         nullable=False
     )
 
+    last_login = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=func.now()
+    )
+
     # memos = db.relationship("Memo", backref="owner")
 
     def __repr__(self):
