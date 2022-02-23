@@ -1,6 +1,6 @@
 from sqlalchemy import func
 from app import db
-from app.aes import MemoAES
+from app.aes import decrypt
 
 # # # Value for Notice Table # # #
 TP_NOTICE = 0
@@ -86,13 +86,14 @@ class Memo(db.Model):
     def get_edit_timestamp(self):
         return round(self.edit.timestamp())
 
+    def get_text(self):
+        return decrypt(payload=self.text)
+
     def to_json(self):
-        k, i, t = self.text.split(".")
-        dec = MemoAES(k, i, bytes.fromhex(t))
         return {
             "id": self.id,
             "edit": self.get_edit_timestamp(),
-            "text": dec.payload,
+            "text": self.get_text(),
             "encrypted": self.encrypted
         }
 

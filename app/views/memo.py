@@ -9,7 +9,7 @@ from app.utils import handle_login
 from app.utils import handle_memo
 from app.utils import resp_json
 from app.models import Memo
-from app.aes import MemoAES
+from app.aes import encrypt
 
 bp = Blueprint("memo", __name__, url_prefix="/memo")
 
@@ -95,22 +95,17 @@ def edit(user, memo: Memo, id_: int):
         )
 
     now = datetime.now()
-    edit_ts = payload.get("edit", memo.edit)
+    edit_timestamp = payload.get("edit", memo.edit)
 
-    if memo.get_edit_timestamp() != edit_ts:
-        # do decrypt
-        k, i, t = memo.text.split(".")
-        dec = MemoAES(k, i, bytes.fromhex(t))
-        memo.text = dec.payload
+    if memo.get_edit_timestamp() != edit_timestamp:
+        memo.text = memo.get_text()
 
-        strftime = now.strftime("%Y/%m/%d %H:%M:%S")
+        date_now = now.strftime("%Y/%m/%d %H:%M:%S")
         text = f"{memo.text}\n\n" \
-               f"=== Edited on {strftime} ===\n\n" \
+               f"=== Edited on {date_now} ===\n\n" \
                f"{text}"
 
-    # do encrypt
-    enc = MemoAES(text=text)
-    memo.text = enc.payload
+    memo.text = encrypt(text=text)
     memo.edit = now
     memo.encrypted = encrypted
 
@@ -142,11 +137,9 @@ def create(user):
             code=400
         )
 
-    enc = MemoAES(text=text)
-
     m = Memo()
     m.owner_id = user.id
-    m.text = enc.payload
+    m.text = encrypt(text=text)
     m.encrypted = encrypted
 
     db.session.add(m)

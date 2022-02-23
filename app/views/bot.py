@@ -8,7 +8,7 @@ from app.models import Memo
 from app.bot.tuples import BotRequest
 from app.utils import resp_json
 from app.utils import handle_bot_verify
-from app.aes import MemoAES
+from app.aes import encrypt
 
 bp = Blueprint("bot", __name__, url_prefix="/bot")
 
@@ -50,11 +50,9 @@ def create():
             code=400
         )
 
-    enc = MemoAES(text=text)
-
     m = Memo()
     m.owner_id = u.id
-    m.text = enc.payload
+    m.text = encrypt(text=text)
     m.encrypted = False
 
     db.session.add(m)
