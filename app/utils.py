@@ -89,7 +89,7 @@ def handle_login(f):
             return resp_json(
                 # message="failed to query a user",
                 message="등록된 유저가 아닙니다.",
-                code=500
+                code=401
             )
 
         return f(*args, **kwargs, user=user)
