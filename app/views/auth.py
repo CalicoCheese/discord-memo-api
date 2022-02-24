@@ -61,21 +61,22 @@ def callback():
         )
     )
 
-    payload, exp = create(
-        user=user
-    )
-
     u = User.query.filter_by(
         discord_id=user.id
     ).first()
+
+    token = encode(
+        payload=create(
+            user=user
+        )
+    )
 
     if u is None:
         return resp_json(
             message="사용자 등록이 필요합니다.",
             code=200,
             data={
-                "token": encode(payload=payload),
-                "exp": exp
+                "token": token
             }
         )
 
@@ -86,8 +87,7 @@ def callback():
         message="로그인 성공",
         code=201,
         data={
-            "token": encode(payload=payload),
-            "exp": exp
+            "token": token
         }
     )
 
