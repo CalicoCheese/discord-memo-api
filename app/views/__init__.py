@@ -1,4 +1,5 @@
 __all__ = [
+    "admin",
     "auth",
     "bot",
     "dashboard",
