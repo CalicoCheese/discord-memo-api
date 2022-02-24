@@ -229,7 +229,7 @@ def update():
     )
 
 
-@bp.delete("/@me")
+@bp.delete("")
 @handle_login
 def delete_me(user: User):
     c = Memo.query.filter_by(
