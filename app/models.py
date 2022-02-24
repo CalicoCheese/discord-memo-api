@@ -36,7 +36,12 @@ class User(db.Model):
         default=func.now()
     )
 
-    tos_agree = db.Column(
+    tos_agree_date = db.Column(
+        db.DateTime,
+        nullable=False
+    )
+
+    privacy_agree_date = db.Column(
         db.DateTime,
         nullable=False
     )

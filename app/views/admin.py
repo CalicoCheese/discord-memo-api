@@ -32,7 +32,8 @@ def get_users(user: User):
         User.id,
         User.is_admin,
         User.creation_date,
-        User.tos_agree,
+        User.tos_agree_date,
+        User.privacy_agree_date,
         User.last_login,
     ).filter(
         User.id > after
@@ -44,7 +45,8 @@ def get_users(user: User):
                 id=u.id,
                 admin=u.is_admin,
                 creation_date=round(u.creation_date.timestamp()),
-                tos_agree_date=round(u.tos_agree.timestamp()),
+                tos_agree_date=round(u.tos_agree_date.timestamp()),
+                privacy_agree_date=round(u.privacy_agree_date.timestamp()),
                 last_login=round(u.last_login.timestamp()),
                 flow=round(time() - u.last_login.timestamp()),
             ) for u in users

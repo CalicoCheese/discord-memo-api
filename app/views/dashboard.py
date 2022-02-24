@@ -23,7 +23,8 @@ def return_info(user: User):
     return resp_json(
         data={
             "creation_date": round(user.creation_date.timestamp()),
-            "tos_agree_date": round(user.tos_agree.timestamp()),
+            "tos_agree_date": round(user.tos_agree_date.timestamp()),
+            "privacy_agree_date": round(user.privacy_agree_date.timestamp()),
             "memo_count": memo_count,
             "enc_memo_count": enc_memo_count,
             "last_login": round(user.last_login.timestamp()),

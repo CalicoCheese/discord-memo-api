@@ -18,6 +18,8 @@ from app import db
 from app.models import User
 from app.models import Memo
 from app.models import Notice
+from app.models import TP_TOS
+from app.models import TP_PRIVACY
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -107,29 +109,70 @@ def check():
         )
 
     tos = Notice.query.filter_by(
-        type=2
+        type=TP_TOS
     ).order_by(
         Notice.id.desc()
     ).first()
 
-    passed = False
-    skipped = False
+    privacy = Notice.query.filter_by(
+        type=TP_PRIVACY
+    ).order_by(
+        Notice.id.desc()
+    ).first()
+
+    message = ""
+
+    def p(text: str) -> str:
+        return f"<p>{text}</p>"
 
     if tos is None:
-        skipped = True
+        flag_t = None
     else:
-        passed = tos.date <= user.tos_agree
+        flag_t = tos.date == user.tos_agree_date
+        if not flag_t:
+            message += p("서비스 이용약관이 변경 되었습니다.")
 
-    return resp_json(
-        message="조회 성공",
-        code=200,
-        data={
-            "tos_agree": user.tos_agree,
-            "passed": passed,
-            "skipped": skipped,
-            "admin": user.is_admin
-        }
-    )
+    if privacy is None:
+        flag_p = None
+    else:
+        flag_p = privacy.date == user.privacy_agree_date
+        if not flag_p:
+            message += p("개인정보 처리방침이 변경 되었습니다.")
+
+    if flag_t is None or flag_p is None:
+        agree = None
+        message = p("약관이 등록되지 않아 서비스를 이용 할 수 없습니다.")
+    else:
+        agree = (flag_p and flag_t) is True
+
+    # 관리자 여부
+    is_admin = user.is_admin
+
+    if not is_admin:
+        # 이 유저가 관리자가 아닌경우
+        return resp_json(
+            message=message,
+            code=200,
+            data=dict(
+                agree=agree,
+                admin=is_admin
+            )
+        )
+    else:
+        # 이 유저가 관리자인 경우
+
+        # 근데 만약 약관이 등록되지 않았다면
+        if agree is None:
+            message = p("약관을 등록하지 않아 서비스를 이용 할 수 없습니다.")
+
+        return resp_json(
+            message=message,
+            code=200,
+            data=dict(
+                agree=agree,
+                admin=is_admin
+            )
+        )
 
 
 @bp.post("/update")
@@ -148,26 +191,40 @@ def update():
             code=401,
         )
 
-    if user is not None:
-        user.tos_agree = datetime.now()
-        db.session.commit()
+    if user is None:
+        user = User()
+        user.discord_id = token['user']['id']
+        user.is_admin = False
 
+        db.session.add(user)
+
+    json = request.get_json(silent=True)
+
+    try:
+        tos = int(json.get("tos"))
+        tos = datetime.fromtimestamp(tos)
+    except TypeError:
         return resp_json(
-            message="이미 등록된 유저입니다.",
+            message="서비스 이용약관의 날짜가 올바르지 않습니다.",
             code=400,
-            data=True
         )
 
-    u = User()
-    u.discord_id = token['user']['id']
-    u.is_admin = False
-    u.tos_agree = datetime.now()
+    try:
+        privacy = int(json.get("privacy"))
+        privacy = datetime.fromtimestamp(privacy)
+    except TypeError:
+        return resp_json(
+            message="개인정보 처리방침의 날짜가 올바르지 않습니다.",
+            code=400,
+        )
 
-    db.session.add(u)
+    user.tos_agree_date = tos
+    user.privacy_agree_date = privacy
+
     db.session.commit()
 
     return resp_json(
-        message="사용자 등록이 완료되었습니다.",
+        message="약관 동의 정보가 업데이트 되었습니다.",
         code=200,
     )
 
