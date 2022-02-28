@@ -29,6 +29,7 @@ def regen_token(user):
     return resp_json(
         code=201,
         data={
-            "token": token
+            "token": token,
+            "is_admin": user.is_admin,
         }
     )
