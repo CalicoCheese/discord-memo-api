@@ -6,8 +6,8 @@ def parse_token(json: dict) -> DiscordToken:
 
 
 def parse_user(json: dict) -> DiscordUser:
-    for x in DiscordUser._fields:
-        if x not in json.keys():
-            json[x] = None
-
-    return DiscordUser(**json)
+    return DiscordUser(
+        id=json['id'],
+        username=json['username'],
+        discriminator=json['discriminator'],
+    )
