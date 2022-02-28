@@ -2,13 +2,6 @@ from sqlalchemy import func
 from app import db
 from app.aes import decrypt
 
-# # # Value for Notice Table # # #
-TP_NOTICE = 0
-TP_PRIVACY = 1
-TP_TOS = 2
-TP_LIST = [TP_NOTICE, TP_PRIVACY, TP_TOS]
-# # # # # # # # # # # # # # # # #
-
 
 class User(db.Model):
     id = db.Column(
@@ -104,6 +97,14 @@ class Memo(db.Model):
 
     def __repr__(self):
         return f"<Memo id={self.id}, owner_id={self.owner_id}>"
+
+
+# # # Value for Notice Table # # #
+TP_NOTICE = 0
+TP_PRIVACY = 1
+TP_TOS = 2
+TP_LIST = [TP_NOTICE, TP_PRIVACY, TP_TOS]
+# # # # # # # # # # # # # # # # #
 
 
 class Notice(db.Model):
