@@ -6,6 +6,7 @@ __all__ = [
     "memo",
     "notice",
     "privacy",
+    "token",
     "tos",
 ]
 
