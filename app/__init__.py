@@ -30,4 +30,11 @@ def create_app():
             blueprint=getattr(getattr(views, view), "bp")
         )
 
+    from app.errors import emap
+    for code in emap.keys():
+        app.register_error_handler(
+            code_or_exception=code,
+            f=emap.get(code)
+        )
+
     return app
